@@ -61,7 +61,7 @@ qrRobotSim::qrRobotSim(ros::NodeHandle &nhIn, std::string robotName, LocomotionM
 
     usleep(300000); // must wait 300ms, to get first state
 
-    timeStep = 0.001;
+    timeStep = 0.002;
     this->ResetTimer();
     lastResetTime = GetTimeSinceReset();
 

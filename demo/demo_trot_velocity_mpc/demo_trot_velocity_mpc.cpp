@@ -40,6 +40,8 @@ int main(int argc, char **argv)
     qrRobot *quadruped;
     ros::AsyncSpinner spinner(1); // one threads
     spinner.start();
+    ros::Rate loop_rate1(1000);
+    ros::Rate loop_rate2(500);
     nh.setParam("isSim", true);
 
     std::cout << "---------Ros Module Init finished---------" << std::endl;
@@ -111,9 +113,16 @@ int main(int argc, char **argv)
             ROS_ERROR("The dog is going down, main function exit.");
             break;
         }
-
-        // wait until this step has cost the timestep to synchronizing frequency.
-        while (quadruped->GetTimeSinceReset() - startTimeWall < quadruped->timeStep) {}
+        if (quadruped->useRosTime) {
+            ros::spinOnce();
+            if (quadruped->timeStep< 0.0015)
+                loop_rate1.sleep();
+            else 
+                loop_rate2.sleep();
+        } else {
+            // wait until this step has cost the timestep to synchronizing frequency.
+            while (quadruped->GetTimeSinceReset() - startTimeWall < quadruped->timeStep) {}
+        }   
     }
     
     ROS_INFO("Time is up, end now.");

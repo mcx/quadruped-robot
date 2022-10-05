@@ -25,7 +25,7 @@
 #include <ros/package.h>
 #include "robots/qr_robot.h"
 
-qrRobot::qrRobot(std::string robotName, LocomotionMode mode): locomotionMode(mode)
+qrRobot::qrRobot(std::string robotName, LocomotionMode mode): locomotionMode(mode),timer(useRosTime)
 {
     std::string pathToPackage = ros::package::getPath("quadruped");
     std::string pathToConfig =  pathToPackage + "/config/robots/" + robotName + ".yaml";

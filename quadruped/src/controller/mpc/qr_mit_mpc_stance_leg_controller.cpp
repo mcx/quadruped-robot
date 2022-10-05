@@ -778,8 +778,8 @@ void qrMITConvexMPCStanceLegController::UpdateDesCommand()
 
     stateCur << robotQ, robotDq;
 
-    std::cout << "[MPC desired state] " << stateDes.transpose() << std::endl;
-    std::cout << "[MPC current state] " << stateCur.transpose() << std::endl;
+    // std::cout << "[MPC desired state] " << stateDes.transpose() << std::endl;
+    // std::cout << "[MPC current state] " << stateCur.transpose() << std::endl;
     //ddqDes.head(6) = desiredDdq;
     // std::cout << "contact for force compute " << contacts.transpose() << std::endl;
 }

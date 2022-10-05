@@ -25,6 +25,9 @@
 #ifndef QR_TIMER_H
 #define QR_TIMER_H
 #include <time.h>
+#include <assert.h>
+#include <stdint.h>
+#include <ros/ros.h>
 
 /**
  * @brief The Timer class counts the time when robots started
@@ -39,11 +42,12 @@ public:
         startTime = (double)start;
     }
 
+    virtual ~Timer() = default;
     /**
      * @brief get time since robot reset
      * @return time since reset
      */
-    inline double GetTimeSinceReset(){
+    virtual double GetTimeSinceReset(){
         finish = clock();
         double timeSinceReset = (double)(finish - startTime) / CLOCKS_PER_SEC; // second(s)
         return timeSinceReset;
@@ -52,9 +56,10 @@ public:
     /**
      * @brief set current time as start time
      */
-    inline void ResetStartTime(){
+    virtual double ResetStartTime(){
         start = clock();
         startTime = (double)start;
+        return startTime;
     }
 
 private:
@@ -73,6 +78,54 @@ private:
      * @brief start time
      */
     double startTime;
+};
+
+class RosTimer : public Timer {
+    public:
+        RosTimer() {
+            startRos = ros::Time::now().toSec();
+        }
+        virtual ~RosTimer() = default;
+        virtual double GetTimeSinceReset() {
+            double timeSinceReset = ros::Time::now().toSec() - startRos;
+            return timeSinceReset;
+        }
+        virtual double ResetStartTime() {
+            startRos = ros::Time::now().toSec();
+            return startRos;
+        }
+    private:
+        double startRos;
+};
+
+class TimerInterface {
+    public:
+        TimerInterface(bool useRosTimerIn = false) : useRosTime(useRosTimerIn), timePtr(nullptr) {
+            if (useRosTime) {
+                timePtr = new RosTimer();
+            }else {
+                timePtr = new Timer();
+            }
+
+            startTime = 0;
+            timeSinceReset = 0;
+        }
+
+        ~TimerInterface() {
+            delete timePtr;
+        }
+        double GetTimeSinceReset() {
+            timeSinceReset = timePtr->GetTimeSinceReset();
+            return timeSinceReset;
+        }
+        void ResetStartTime() {
+            startTime = timePtr->ResetStartTime();
+        }
+    private:
+        bool useRosTime;
+        Timer* timePtr;
+        double startTime;
+        double timeSinceReset;
 };
 
 #endif // QR_TIMER_H

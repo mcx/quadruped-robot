@@ -179,9 +179,8 @@ public:
      * @brief get robot timer
      * @return timer
      */
-    inline Timer &GetTimer()
+    inline TimerInterface &GetTimer()
     { return timer; }
-
     /**
      * @brief reset the timer
      */
@@ -207,7 +206,7 @@ public:
     /**
      * @brief timer that store time since robot starts
      */
-    Timer timer;
+    TimerInterface timer;
 
     /**
      * @brief control frequence of the robot
@@ -233,6 +232,11 @@ public:
      * @brief restore the state of the robot
      */
     qrRobotState state;
+
+    /**
+    *@brief whether use ros timer
+    */
+    bool useRosTime = false;
 
     /**
      * @brief whether the robot has stopped
