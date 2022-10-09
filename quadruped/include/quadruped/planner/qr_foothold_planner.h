@@ -37,9 +37,10 @@ public:
     /** 
      * @brief Constructor of qrFootholdPlanner.
      * @param robotIn The robot object pointer.
+     * @param gaitGenerator The gait generator pointer.
      * @param groundEstimator The ground estimator
      */
-    qrFootholdPlanner(qrRobot *robotIn, qrGroundSurfaceEstimator *groundEsitmatorIn);
+    qrFootholdPlanner(qrRobot *robotIn, qrGaitGenerator* gaitGeneratorIn, qrGroundSurfaceEstimator *groundEsitmatorIn,qrUserParameters* userParametersIn,qrDesiredStateCommand* desiredStateCommandIn);
 
     /**
      * @brief Deconstruct a qrFootholdPlanner object.
@@ -49,7 +50,7 @@ public:
     /** 
      * @brief Reset the foothold planner
      */
-    void Reset();
+     void Reset(float t);
 
     /**
     * @brief only be called at the moment right before lift up legs.
@@ -110,11 +111,19 @@ public:
         return desiredFootholds.col(legId);
     }
 
+    void ComputeHeuristicFootHold(std::vector<u8> swingFootIds);
+
 public:
     /** 
      * @brief qrRobot object.
      */
     qrRobot *robot;
+
+    /**
+     * @brief qrGaitgenerator object.
+     * 
+     */
+    qrGaitGenerator *gaitGenerator;
 
     /** 
      * @brief qrGroundSurfaceEstimator object.
@@ -169,6 +178,16 @@ public:
      * @brief desired foot-end position for walk mode 
      */
     Eigen::Matrix<float, 3, 4> desiredFootholds;
+
+
+    qrUserParameters* userParameters;
+
+    qrDesiredStateCommand* desiredStateCommand;
+
+    Vec4<float> phase;
+    Vec3<float> swingKp;
+    int moveDown[4] = {0,0,0,0};
+    Vec12<float> firstSwingBaseState;
 };
 
 #endif //QR_FOOTHOLD_PLANNER_H_

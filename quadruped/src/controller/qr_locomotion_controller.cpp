@@ -26,17 +26,20 @@
 
 qrLocomotionController::qrLocomotionController(qrRobot *robotIn,
                                             qrGaitGenerator *gaitGeneratorIn,
+                                            qrDesiredStateCommand *desiredStateCommandIn,
                                             qrRobotEstimator *stateEstimatorIn,
                                             qrGroundSurfaceEstimator *groundEstimatorIn,
                                             qrComPlanner *comPlannerIn,
                                             qrSwingLegController *swingLegControllerIn,
-                                            qrStanceLegController *stanceLegControllerIn)
+                                            qrStanceLegController *stanceLegControllerIn,
+                                            qrUserParameters *userParameters)
 :
-    robot(robotIn), gaitGenerator(gaitGeneratorIn), stateEstimator(stateEstimatorIn), groundEstimator(groundEstimatorIn), comPlanner(comPlannerIn),
+    robot(robotIn), gaitGenerator(gaitGeneratorIn), desiredStateCommand(desiredStateCommandIn), stateEstimator(stateEstimatorIn), groundEstimator(groundEstimatorIn), comPlanner(comPlannerIn),
     swingLegController(swingLegControllerIn), stanceLegController(stanceLegControllerIn)
 {
     resetTime = robot->GetTimeSinceReset();
     timeSinceReset = 0.;
+    BindCommand();
 }
 
 void qrLocomotionController::Reset()
@@ -49,6 +52,7 @@ void qrLocomotionController::Reset()
     comPlanner->Reset(timeSinceReset);
     swingLegController->Reset(timeSinceReset);
     stanceLegController->Reset(timeSinceReset);
+    BindCommand();
 }
 
 void qrLocomotionController::GetComPositionInWorldFrame(ros::ServiceClient& baseStateClient)

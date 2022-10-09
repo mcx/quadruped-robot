@@ -117,6 +117,7 @@ public:
         qrGroundSurfaceEstimator *groundEstimatorIn,
         qrComPlanner *comPlanner,
         qrFootholdPlanner *footholdPlanner,
+        qrUserParameters *userParameters,
         Eigen::Matrix<float, 3, 1> desired_speed,
         float desiredTwistingSpeed,
         float desiredBodyHeight,

@@ -78,4 +78,28 @@ enum GaitType {
     AMBLE,
     TROT
 };
+
+/** @brief  used for remote controll command */
+enum RC_MODE {
+    HARD_CODE = 0,
+    JOY_TROT,
+    JOY_ADVANCED_TROT,
+    JOY_WALK,
+    JOY_STAND,
+    // ROS_WALK
+    // VISUAL,
+    BODY_UP,
+    BODY_DOWN,
+    EXIT,
+    RC_MODE_ITEMS = EXIT
+};
+
+enum SplineType {
+        XYLinear_ZParabola=0,
+        QuadraticPolygon,
+        CubicPolygon,
+        QuinticPolygon,
+        BSpline
+        
+    };
 #endif //QR_TYPES_H

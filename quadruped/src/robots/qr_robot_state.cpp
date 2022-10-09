@@ -82,7 +82,6 @@ Eigen::Matrix<float, 3, 4> qrRobotState::GetFootPositionsInBaseFrame()
 {
     return config->FootPositionsInBaseFrame(this->motorAngles);
 }
-
 Eigen::Matrix<float, 3, 4> qrRobotState::GetFootPositionsInWorldFrame(bool useInput, Vec3<float> basePositionIn, Quat<float> baseOrientationIn)
 {
     Eigen::Matrix<float, 3, 4> footPositionsInBaseFrame = GetFootPositionsInBaseFrame(); // base to  world frame

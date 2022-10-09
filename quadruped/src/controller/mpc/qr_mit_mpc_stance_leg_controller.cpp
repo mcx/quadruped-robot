@@ -14,6 +14,7 @@ qrMITConvexMPCStanceLegController::qrMITConvexMPCStanceLegController(
     qrGroundSurfaceEstimator *groundEstimatorIn,
     qrComPlanner *comPlanner,
     qrFootholdPlanner *footholdPlanner,
+    qrUserParameters *userParameters,
     Eigen::Matrix<float, 3, 1> desired_speed,
     float desiredTwistingSpeed,
     float desiredBodyHeight,
@@ -21,7 +22,7 @@ qrMITConvexMPCStanceLegController::qrMITConvexMPCStanceLegController(
     std::string configFilepath,
     std::vector<float> frictionCoeffs)
     : qrStanceLegController(robot, gaitGenerator, robotVelocityEstimator, groundEstimatorIn, comPlanner,
-       footholdPlanner, desired_speed, desiredTwistingSpeed, desiredBodyHeight, numLegs, configFilepath, frictionCoeffs),
+       footholdPlanner,userParameters, desired_speed, desiredTwistingSpeed, desiredBodyHeight, numLegs, configFilepath, frictionCoeffs),
       horizonLength(5), // 5
       dtMPC(0.06), // 0.02 0.06
       dt(0.002)

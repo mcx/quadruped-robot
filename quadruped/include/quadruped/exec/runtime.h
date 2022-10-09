@@ -28,6 +28,7 @@
 #include <iostream>
 #include <typeinfo>
 #include <yaml-cpp/yaml.h>
+#include <string>
 
 
 #include "controller/qr_locomotion_controller.h"

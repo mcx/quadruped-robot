@@ -182,7 +182,7 @@ public:
      * @return foot positions in base frame
      */
     Eigen::Matrix<float, 3, 4> GetFootPositionsInBaseFrame();
-
+    
     /**
      * @brief get foot positions in world frame
      * @return foot positions in world frame

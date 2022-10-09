@@ -40,6 +40,8 @@
 #include "planner/qr_gait_generator.h"
 #include "controller/qr_raibert_swing_leg_controller.h"
 #include "controller/qr_torque_stance_leg_controller.h"
+#include "controller/qr_desired_state_command.h"
+#include "controller/qr_state_dataflow.h"
 #include "planner/qr_com_planner.h"
 #include "state_estimator/qr_robot_estimator.h"
 #include "state_estimator/qr_ground_estimator.h"
@@ -63,16 +65,28 @@ public:
      */
     qrLocomotionController(qrRobot *robot,
                             qrGaitGenerator *gaitGenerator,
+                            qrDesiredStateCommand* desiredStateCommand,
                             qrRobotEstimator *stateEstimator,
                             qrGroundSurfaceEstimator *groundEstimator,
                             qrComPlanner *comPlanner,
                             qrSwingLegController *swingLegController,
-                            qrStanceLegController *stanceLegController);
+                            qrStanceLegController *stanceLegController,
+                            qrUserParameters *userParameters );
 
     /**
      * @brief Deconstruct a qrSwingLegController object.
      */
     ~qrLocomotionController() = default;
+
+    /**
+     * @brief init desired state command
+     * 
+     */
+     void BindCommand()
+    {
+        swingLegController->BindCommand(desiredStateCommand);
+        stanceLegController->BindCommand(desiredStateCommand);
+    }
 
     /** 
      * @brief Reset the planners, estimatiors and controllers.
@@ -196,6 +210,10 @@ private:
      */
     std::vector<qrMotorCommand> action;
 
+    /**
+     * @brief desired state command for controller ans planner
+     */
+    qrDesiredStateCommand  *desiredStateCommand;
     /** 
      * @brief the time when last call Reset() function.
      */

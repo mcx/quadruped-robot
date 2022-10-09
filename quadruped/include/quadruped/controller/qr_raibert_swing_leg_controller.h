@@ -31,6 +31,7 @@
 #include "state_estimator/qr_ground_estimator.h"
 #include "planner/qr_foothold_planner.h"
 #include "controller/qr_foot_trajectory_generator.h"
+#include "qr_desired_state_command.h"
 
 /**
  * @brief Control swing leg of robot
@@ -56,6 +57,7 @@ public:
                                 qrRobotEstimator *stateEstimator,
                                 qrGroundSurfaceEstimator *groundEstimator,
                                 qrFootholdPlanner *FootholdPlanner,
+                                qrUserParameters *userParameters,
                                 Eigen::Matrix<float, 3, 1> desiredSpeed,
                                 float desiredTwistingSpeed,
                                 float desiredHeight,
@@ -94,8 +96,10 @@ public:
      * @param footPositionInBaseFrame The the foot position in base frame.
      * @param legId The id of processing leg.
      */
-    void VelocityLocomotionProcess(const Eigen::Matrix<float, 3, 3> &dR, 
-                                    Eigen::Matrix<float, 3, 1> &footPositionInBaseFrame, 
+    void VelocityLocomotionProcess(const Eigen::Matrix<float, 3, 3> &dR, const Mat3<float> &robotBaseR,
+                                    Eigen::Matrix<float, 3, 1> &footPositionInBaseFrame,
+                                    Eigen::Matrix<float, 3, 1> &footVelocityInBaseFrame,
+                                    Eigen::Matrix<float, 3, 1> &footAccInBaseFrame, 
                                     int legId);
 
     /**
@@ -105,9 +109,28 @@ public:
      * @param legId The id of processing leg.
      */
     void PositionLocomotionProcess(Eigen::Matrix<float, 3, 1> &footPositionInWorldFrame, 
-                                    Eigen::Matrix<float, 3, 1> &footPositionInBaseFrame, 
+                                    Eigen::Matrix<float, 3, 1> &footPositionInBaseFrame,
+                                    Eigen::Matrix<float, 3, 1> &footVelocityInWorldFrame,
+                                    Eigen::Matrix<float, 3, 1> &footAccInWorldFrame,
                                     int legId);
+    
 
+    /**
+     * @brief The process of position locomotion.
+     * @param footPositionInWorldFrame The the foot position in world frame.
+     * @param footPositionInBaseFrame The the foot position in base frame.
+     * @param legId The id of processing leg.
+     */
+    void AdvancedLocomotionProcess(qrStateDataFlow &stateData,
+                                    Eigen::Matrix<float, 3, 1> &footPositionInWorldFrame, 
+                                    Eigen::Matrix<float, 3, 1> &footPositionInBaseFrame,
+                                    Eigen::Matrix<float, 3, 1> &footVelocityInBaseFrame,
+                                    Eigen::Matrix<float, 3, 1> &footVelocityInWorldFrame,
+                                    Eigen::Matrix<float, 3, 1> &footAccInBaseFrame,
+                                    Eigen::Matrix<float, 3, 1> &footAccInWorldFrame,
+                                    const Mat3<float> &robotBaseR,
+                                    Quat<float> &robotComOrientation,
+                                    int legId);
 
     /**
      * @brief update linear velocity and angular velocity of controllers
@@ -125,6 +148,15 @@ public:
      * @brief Update the controller parameters.
      */
     void Update(float currentTime);
+
+     /**
+     * @brief set desired command for stance controller
+     * @param desiredStateCommandIn
+     */
+    void BindCommand(qrDesiredStateCommand* desiredStateCommandIn)
+    {
+        desiredStateCommand = desiredStateCommandIn;
+    }
 
 
     /** @brief Compute all motors' commands using this controller.
@@ -167,6 +199,12 @@ public:
      * @brief Robot's foothold planner. Get desired COM pose when in walk locomotion.
      */
     qrFootholdPlanner *footholdPlanner;
+
+    /**
+     * @brief desired state command
+     * 
+     */
+    qrDesiredStateCommand *desiredStateCommand;
 
     /**
      * @brief The state of each leg.
@@ -219,6 +257,32 @@ public:
      * @brief the foot offset.
      */
     float footOffset;
+
+    std::vector<u8> swingFootIds;
+
+    Eigen::Matrix<float, 3, 4> footTargetPositionsInWorldFrame;
+    Eigen::Matrix<float, 3, 4> desiredFootPositionsInBaseFrame;
+    Quat<float> controlFrameOrientationSource;
+    Vec3<float> controlFrameOriginSource;
+
+    Eigen::Matrix<float, 3, 4> phaseSwitchFootControlPos;
+    Eigen::Matrix<float, 3, 4> footHoldInControlFrame;
+
+    qrSplineInfo splineInfo;
+
+
+    Eigen::Matrix<float,3,4> foot_forces_kin;
+    Eigen::Matrix<float,3,4> foot_pos_rel_last_time;
+    Eigen::Matrix<float,3,4> foot_pos_target_last_time;
+    Eigen::Matrix<float,3,4> foot_pos_error;
+    Eigen::Matrix<float,3,4> foot_vel_error;
+    Eigen::Matrix<float,3,4> lastLegTorque;
+
+    qrUserParameters *userParameters;
+
+
+    // The position correction coefficients in Raibert's formula.
+    Eigen::Matrix<float, 3, 1> swingKp;
 };
 
 #endif //QR_SWING_LEG_CONTROLLER_H

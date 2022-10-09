@@ -44,6 +44,7 @@ int main(int argc, char **argv)
     ros::Rate loop_rate2(500);
     nh.setParam("isSim", true);
 
+    ros::ServiceClient baseStateClient = nh.serviceClient<gazebo_msgs::GetLinkState>("/gazebo/get_link_state");
     std::cout << "---------Ros Module Init finished---------" << std::endl;
 
     if(argc == 1 || (argc == 2 && std::string(argv[1]) == "sim")) {
@@ -54,11 +55,11 @@ int main(int argc, char **argv)
         ROS_INFO("---------finished: ROS, Gazebo controller and loading robot model---------");
         
         // create a quadruped robot.
-        quadruped = new qrRobotSim(nh, robotName, LocomotionMode::VELOCITY_LOCOMOTION);
+        quadruped = new qrRobotSim(nh, robotName, LocomotionMode::ADVANCED_TROT_LOCOMOTION);
     
     } else if(argc == 2 && std::string(argv[1]) == "real"){
         nh.setParam("isSim", false);
-        quadruped = new qrRobotReal(robotName, LocomotionMode::VELOCITY_LOCOMOTION);
+        quadruped = new qrRobotReal(robotName, LocomotionMode::ADVANCED_TROT_LOCOMOTION);
     }
     // create command receiver to update velocity if changed.
     qrVelocityParamReceiver* cmdVelReceiver = new qrVelocityParamReceiver(nh, pathToNode);
@@ -96,7 +97,7 @@ int main(int argc, char **argv)
         updateControllerParams(locomotionController,
                                 desiredSpeed,
                                 desiredTwistingSpeed);
-
+        locomotionController->GetComPositionInWorldFrame(baseStateClient);
         // update the locomotion controller include many estimators' update. 
         locomotionController->Update();
 

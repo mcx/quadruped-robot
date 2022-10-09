@@ -37,6 +37,8 @@
 #include "robots/qr_robot.h"
 #include "common/qr_se3.h"
 #include "state_estimator/qr_ground_estimator.h"
+#include "controller/qr_desired_state_command.h"
+#include "planner/qr_gait_generator.h"
 
 
 class qrFootStepper  {

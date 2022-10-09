@@ -32,7 +32,7 @@
 #include "state_estimator/qr_ground_estimator.h"
 #include "planner/qr_com_planner.h"
 #include "planner/qr_foothold_planner.h"
-
+#include "qr_desired_state_command.h"
 
 /**
  * @brief Control stance leg of robot
@@ -61,6 +61,7 @@ public:
                           qrGroundSurfaceEstimator *groundEstimatorIn,
                           qrComPlanner *comPlanner,
                           qrFootholdPlanner *footholdPlanner,
+                          qrUserParameters *userParameters,
                           Eigen::Matrix<float, 3, 1> desired_speed,
                           float desiredTwistingSpeed,
                           float desiredBodyHeight,
@@ -80,6 +81,7 @@ public:
                                                          qrGroundSurfaceEstimator *groundEstimatorIn,
                                                          qrComPlanner *comPlanner,
                                                          qrFootholdPlanner *footholdPlanner,
+                                                         qrUserParameters *userParameters,
                                                          Eigen::Matrix<float, 3, 1> desiredSpeed,
                                                          float desiredTwistingSpeed,
                                                          float desiredBodyHeight,
@@ -148,7 +150,14 @@ public:
                                     Eigen::Matrix<float, 3, 1> &desiredComVelocity,
                                     Eigen::Matrix<float, 3, 1> &desiredComRpy,
                                     Eigen::Matrix<float, 3, 1> &desiredComAngularVelocity);
-
+    /**
+     * @brief set desired command for stance controller
+     * @param desiredStateCommandIn
+     */
+    void BindCommand(qrDesiredStateCommand* desiredStateCommandIn)
+    {
+        desiredStateCommand = desiredStateCommandIn;
+    }
     /** 
      * @brief Compute all motors' commands via controllers.
      *  @return tuple<map, Matrix<3,4>> : 
@@ -193,6 +202,12 @@ public:
      * @brief Robot's foothold planner. Get desired COM pose when in walk locomotion.
      */
     qrFootholdPlanner *footholdPlanner;
+
+    /**
+     * @brief desired state command
+     * 
+     */
+    qrDesiredStateCommand *desiredStateCommand;
 
     /**
      * @brief Desired speed of the robot in walk or position locomotion.

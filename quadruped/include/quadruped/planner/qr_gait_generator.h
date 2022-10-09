@@ -202,6 +202,8 @@ public:
     std::string nextGaitType;
 
     Eigen::Matrix<float, 4, 1> phaseInFullCycle;
+
+    Vec4<float> swingTimeRemaining = {0.f,0.f,0.f,0.f};
 };
 
 #endif //QR_GAIT_GENERATOR_H

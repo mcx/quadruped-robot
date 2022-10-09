@@ -26,10 +26,20 @@
 
 qrLocomotionController *setUpController(qrRobot *quadruped, std::string homeDir, ros::NodeHandle &nh, bool useMPC)
 {
-    qrGaitGenerator *gaitGenerator;
     bool isSim;
     nh.getParam("isSim", isSim);
     std::string prefix = isSim ? "sim" : "real";
+
+    qrDesiredStateCommand *desiredStateCommand;
+
+    desiredStateCommand = new qrDesiredStateCommand(nh, quadruped);
+
+    qrUserParameters *userParameters;
+
+    userParameters = new qrUserParameters(homeDir + "/" + prefix + "_config/user_parameters.yaml");
+    
+    qrGaitGenerator *gaitGenerator;
+    
     gaitGenerator = new qrGaitGenerator(quadruped, homeDir + "/" + prefix + "_config/openloop_gait_generator.yaml");
                                                                      
     std::cout << "init gaitGenerator finish\n" << std::endl;
@@ -43,7 +53,7 @@ qrLocomotionController *setUpController(qrRobot *quadruped, std::string homeDir,
     qrComPlanner  *comPlanner  = new qrComPlanner (quadruped, gaitGenerator, stateEstimator);
     std::cout << "init comPlanner  finish\n" << std::endl;
 
-    qrFootholdPlanner *footholdPlanner = new qrFootholdPlanner(quadruped, groundEsitmator);
+    qrFootholdPlanner *footholdPlanner = new qrFootholdPlanner(quadruped, gaitGenerator,groundEsitmator,userParameters,desiredStateCommand);
     std::cout << "init footholdPlanner finish\n" << std::endl;
 
     qrSwingLegController *swingLegController = new qrSwingLegController(quadruped,
@@ -51,6 +61,7 @@ qrLocomotionController *setUpController(qrRobot *quadruped, std::string homeDir,
                                                                         stateEstimator,
                                                                         groundEsitmator,
                                                                         footholdPlanner,
+                                                                        userParameters,
                                                                         desiredSpeed,
                                                                         desiredTwistingSpeed,
                                                                         quadruped->config->bodyHeight,
@@ -66,6 +77,7 @@ qrLocomotionController *setUpController(qrRobot *quadruped, std::string homeDir,
           groundEsitmator,
           comPlanner,
           footholdPlanner,
+          userParameters,
           desiredSpeed,
           desiredTwistingSpeed,
           quadruped->config->bodyHeight,
@@ -77,11 +89,13 @@ qrLocomotionController *setUpController(qrRobot *quadruped, std::string homeDir,
 
     qrLocomotionController *locomotionController = new qrLocomotionController(quadruped,
                                                                           gaitGenerator,
+                                                                          desiredStateCommand,
                                                                           stateEstimator,
                                                                           groundEsitmator,
                                                                           comPlanner,
                                                                           swingLegController,
-                                                                          stanceLegController);
+                                                                          stanceLegController,
+                                                                          userParameters);
 
     std::cout << "init locomotionController finish\n" << std::endl;
 

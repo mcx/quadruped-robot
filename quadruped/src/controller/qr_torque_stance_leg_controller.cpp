@@ -36,6 +36,7 @@ qrStanceLegController::qrStanceLegController(qrRobot *robot,
                                             qrGroundSurfaceEstimator *groundEstimatorIn,
                                             qrComPlanner *comPlanner,
                                             qrFootholdPlanner *footholdPlanner,
+                                            qrUserParameters *userParameters,
                                             Eigen::Matrix<float, 3, 1> desiredSpeed,
                                             float desiredTwistingSpeed,
                                             float desiredBodyHeight,
@@ -64,6 +65,7 @@ qrStanceLegController *qrStanceLegController::createStanceController(qrRobot *ro
                                                                      qrGroundSurfaceEstimator *groundEstimatorIn,
                                                                      qrComPlanner *comPlanner,
                                                                      qrFootholdPlanner *footholdPlanner,
+                                                                     qrUserParameters *userParameters,
                                                                      Eigen::Matrix<float, 3, 1> desiredSpeed,
                                                                      float desiredTwistingSpeed,
                                                                      float desiredBodyHeight,
@@ -74,12 +76,12 @@ qrStanceLegController *qrStanceLegController::createStanceController(qrRobot *ro
 {
     if(!useMPC){
         return new qrStanceLegController(robot, gaitGenerator, robotEstimator, groundEstimatorIn,
-                                         comPlanner, footholdPlanner, desiredSpeed, desiredTwistingSpeed,
+                                         comPlanner, footholdPlanner,userParameters, desiredSpeed, desiredTwistingSpeed,
                                          desiredBodyHeight, numLegs, configFilepath, frictionCoeffs);
     }
     else {
         return new qrMITConvexMPCStanceLegController(robot, gaitGenerator, robotEstimator, groundEstimatorIn,
-                                                     comPlanner, footholdPlanner, desiredSpeed, desiredTwistingSpeed,
+                                                     comPlanner, footholdPlanner,userParameters, desiredSpeed, desiredTwistingSpeed,
                                                      desiredBodyHeight, numLegs, configFilepath, frictionCoeffs);
     }
 }

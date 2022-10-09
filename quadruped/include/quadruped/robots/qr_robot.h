@@ -38,6 +38,7 @@
 #include "common/qr_se3.h"
 #include "qr_robot_config.h"
 #include "qr_robot_state.h"
+#include "controller/qr_state_dataflow.h"
 
 
 
@@ -98,6 +99,13 @@ public:
         return this->config->bodyMass;
     }
 
+    inline Eigen::Matrix<float, 3, 4> GetHipPositionsInBaseFrame() {
+        return this->config->defaultHipPosition;
+    }
+
+    inline Eigen::Matrix<float, 3, 4> GetHipOffset() {
+        return this->config->hipOffset;
+    }
     /**
      * @brief get current 12 motor angles
      * @return vector of current motor angles
@@ -167,6 +175,7 @@ public:
     {
         return state.baseVelocity;
     }
+
 
     /**
      * @brief get current time of one step
@@ -258,11 +267,9 @@ public:
      */
     Eigen::Matrix<float, 4, 1> gazeboBaseOrientation = {1.f,0.f,0.f,0.f}; //robot base orientation in world frame
 
-    /**
-     * @brief robot state interface for real robot
-     */
-    // RobotInterface robotInterface;
 
+    qrStateDataFlow stateDataFlow;
+    
 };
 
 #endif //QR_ROBOT_H
